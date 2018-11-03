@@ -22,10 +22,14 @@ public class MainActivity extends AppCompatActivity {
     final int DIALOG_DATE = 1;
     final int DIALOG_TIME = 2;
     final int DIALOG_RADIO = 3;
-    private Context context;
-    AudioManager mAudioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
-    int mod = 0;
     int temp;
+    Date data = new Date();
+//    int gH = data.getHours();//시간
+//    int gM = data.getMinutes();//분
+//    int gY = (data.getYear() + 1900);//년도
+//    int gMh = (data.getMonth() + 1);//월
+//    int gD = data.getDate();//일
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
                 setAlarm();
             }
         });
+
     } // end of onCreate
 
     int hOD;
@@ -85,13 +90,14 @@ public class MainActivity extends AppCompatActivity {
                                                 year1 + "년 " + (monthOfYear1 + 1) + "월 " + dayOfMonth1 + "일 을 선택했습니다",
                                                 Toast.LENGTH_SHORT).show();
                                         year = year1;
-                                        monthOfYear = monthOfYear1;
+                                        monthOfYear = monthOfYear1+1;
                                         dayOfMonth = dayOfMonth1;
+
                                     }
                                 }
                                 , // 사용자가 날짜설정 후 다이얼로그 빠져나올때
                                 //    호출할 리스너 등록
-                                2018, 10, 03); // 기본값 연월일
+                                (data.getYear() + 1900), data.getMonth(), data.getDate()); // 기본값 연월일
                 return dpd;
             case DIALOG_TIME:
                 TimePickerDialog tpd =
@@ -105,9 +111,10 @@ public class MainActivity extends AppCompatActivity {
                                                 Toast.LENGTH_SHORT).show();
                                         hOD = hourOfDay;
                                         nue = minute;
+
                                     }
                                 }, // 값설정시 호출될 리스너 등록
-                                1, 00, false); // 기본값 시분 등록
+                                data.getHours(), data.getMinutes(), false); // 기본값 시분 등록
                 // true : 24 시간(0~23) 표시
                 // false : 오전/오후 항목이 생김
                 return tpd;
@@ -122,7 +129,7 @@ public class MainActivity extends AppCompatActivity {
                                         Toast.makeText(getApplicationContext(),
                                                 str2[temp] + "을 선택했음",
                                                 Toast.LENGTH_SHORT).show();
-                                        mod = temp;
+
                                     }
                                 })
                         .setNegativeButton("취소", null)
@@ -140,29 +147,52 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onCreateDialog(id);
+
     }
-    Date data = new Date();
+boolean Y;
     public void setAlarm() {
-        while (true) {
-            int gH =data.getHours();
-            int gM = data.getMinutes();
-            int gY = data.getYear();
-            int gMh = (data.getMonth() + 1);
-            int gD = data.getDate();
-            if (hOD == gH && nue == gM && year == gY && monthOfYear == gMh && dayOfMonth == gD) {
-                if(mod==0) {
-                    mAudioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+
+        int gH = data.getHours();//시간
+        int gM = data.getMinutes();//분
+        int gY = (data.getYear() + 1900);//년도
+        int gMh = (data.getMonth() + 1);//월
+        int gD = data.getDate();//일
+        Toast.makeText(getApplicationContext(),"저장 완료",
+                Toast.LENGTH_SHORT).show();
+        AudioManager am;
+        am= (AudioManager) getBaseContext().getSystemService(Context.AUDIO_SERVICE);
+        Toast.makeText(getApplicationContext(),gY+"년 "+gMh+"월 "+gD+"일 "+gH+"시 "+gM+"분",
+                Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(),year+"년 "+monthOfYear+"월 "+dayOfMonth+"일 "+hOD+"시 "+nue+"분",
+                Toast.LENGTH_SHORT).show();
+//    int gH = data.getHours();//시간
+//    int gM = data.getMinutes();//분
+//    int gY = (data.getYear() + 1900);//년도
+//    int gMh = (data.getMonth() + 1);//월
+//    int gD = data.getDate();//일
+        while (year ==  (data.getYear() + 1900) && hOD==data.getHours() && nue == data.getMinutes() && monthOfYear == (data.getMonth() + 1) && dayOfMonth == data.getDate()) {
+                if (temp == 0) {
+                    Toast.makeText(getApplicationContext(), "소리모드 변경 완료",
+                            Toast.LENGTH_SHORT).show();
+                    am.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+
                     break;
                 }
-                if(mod==1) {
-                    mAudioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
+                if (temp == 1) {
+                    Toast.makeText(getApplicationContext(), "무음모드 변경 완료",
+                            Toast.LENGTH_SHORT).show();
+                    am.setRingerMode(AudioManager.RINGER_MODE_SILENT);
+
                     break;
                 }
-                if(mod==2) {
-                    mAudioManager.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
+                if (temp == 2) {
+                    Toast.makeText(getApplicationContext(), "진동모드 변경 완료",
+                            Toast.LENGTH_SHORT).show();
+                    am.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
+
                     break;
-                }
                 }
             }
-        }
+
     }
+}
